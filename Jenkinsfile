@@ -7,9 +7,11 @@ pipeline {
     stages {
         stage("SSH Agent") {
             steps {
-                sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
-                sshCommand remote: remote, command: "cd deploy"
-                sshCommand remote: remote, command: "docker compose up"
+               script {
+                    sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
+                    sshCommand remote: remote, command: "cd deploy"
+                    sshCommand remote: remote, command: "docker compose up"
+               }
             }
         }
         // stage("Login with user role") {
