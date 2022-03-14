@@ -15,6 +15,7 @@ pipeline {
                         remote.user = "$user"
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
+                        sshCommand remote: remote, command: "cd deploy && docker compose down"
                         sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
                         sshCommand remote: remote, command: "cd deploy && docker compose up -d"
                     }
