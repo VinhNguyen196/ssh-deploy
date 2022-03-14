@@ -5,7 +5,7 @@ pipeline {
     //     //dockerTool "docker"
     // }
     stages {
-        stage  {
+        stage {
             steps {
                 sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
                 sshCommand remote: remote, command: "cd deploy"
