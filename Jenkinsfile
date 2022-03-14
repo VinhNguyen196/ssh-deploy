@@ -8,9 +8,17 @@ pipeline {
         stage("SSH Agent") {
             steps {
                script {
-                    sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
-                    sshCommand remote: remote, command: "cd deploy"
-                    sshCommand remote: remote, command: "docker compose up"
+                   withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                        def remote = [:]
+                        remote.name = 'deploy'
+                        remote.host = 'node-server.centralindia.cloudapp.azure.com'
+                        remote.user = "$user"
+                        remote.password = "$pass"
+                        remote.allowAnyHosts = true
+                        sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
+                        sshCommand remote: remote, command: "cd deploy"
+                        sshCommand remote: remote, command: "docker compose up -d"
+                    }
                }
             }
         }
