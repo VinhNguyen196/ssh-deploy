@@ -43,14 +43,16 @@ pipeline {
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
                         sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
-                        sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
-                        sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
-                        sshCommand remote: remote, command: "./deploy/$SCRIPT_CLEAN"
+                        // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
+                        // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
+                        // sshCommand remote: remote, command: "./deploy/$SCRIPT_CLEAN"
+                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
                         sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
-                        sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_START", into: "./deploy"
-                        sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_START & ./deploy/$SCRIPT_START"
-                        sshCommand remote: remote, command: "./deploy/$SCRIPT_START"
+                        // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_START", into: "./deploy"
+                        // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_START & ./deploy/$SCRIPT_START"
+                        // sshCommand remote: remote, command: "./deploy/$SCRIPT_START"
+                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_START"
                         sshCommand remote: remote, failOnError: false, command: "docker image ls | grep $DOCKER_IMAGE"
                     }
                }

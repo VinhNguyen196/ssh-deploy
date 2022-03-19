@@ -2,7 +2,7 @@
 source ~/.bashrc
 export TEMP_STR=$(docker images | grep $DOCKER_IMAGE)
 
-TEMP_STR=$( echo ${TEMP_STR} | sed \'s/^ *//g\')
+TEMP_STR=$( echo ${TEMP_STR} | sed 's/^ *//g')
 
 TEMP_STR=${TEMP_STR/ /:}
 
