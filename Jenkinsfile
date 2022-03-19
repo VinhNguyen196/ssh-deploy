@@ -9,21 +9,6 @@ pipeline {
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     }
     stages {
-        stage("email") {
-            steps {
-                script {
-                    def mailRecipients = "unilinkproject@gmail.com"+
-                        ";vinhnquoc196@gmail.com";
-                    emailext attachLog: true,
-                        body: '$DEFAULT_CONTENT',
-                        mimeType: 'text/html',
-                        subject: '$DEFAULT_SUBJECT',
-                        replyTo: '$DEFAULT_REPLYTO'
-                        to: "$mailRecipients"
-                }
-                
-            }
-        }
         // stage("build") {
         //     steps {
         //         sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
@@ -140,14 +125,23 @@ pipeline {
         // //     }
         // // }
     }
-    // post {
-    //     success {
-    //         emailext body: 'Deploy success', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
-    //         // recipientProviders: [developers(), requestor()],
-    //     }
-    //     failure {
-    //         emailext body: 'Deploy fail', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
-    //         // recipientProviders: [developers(), requestor()],
-    //     }
-    // }
+    post {
+        always {
+            script {
+                    def mailRecipients = "unilinkproject@gmail.com"+
+                        ";vinhnquoc196@gmail.com";
+                    emailext attachLog: true,
+                        body: '$DEFAULT_CONTENT',
+                        mimeType: 'text/html',
+                        subject: '$DEFAULT_SUBJECT',
+                        to: "$mailRecipients"
+                }
+        }
+        success {
+            // recipientProviders: [developers(), requestor()],
+        }
+        failure {
+            // recipientProviders: [developers(), requestor()],
+        }
+    }
 }
