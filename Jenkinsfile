@@ -42,10 +42,11 @@ pipeline {
                         remote.user = "$user"
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
-                        sshScript remote: remote, failOnError: false, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
+                        sshCommand remote: remote, command: "sudo sed -i 's/export DOCKER_IMAGE=/export DOCKER_IMAGE=$DOCKER_IMAGE/g' ~/.bashrc"
+                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
                         sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
-                        sshScript remote: remote, failOnError: false, script: "$SCRIPT_PATH$SCRIPT_START"
+                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_START"
                         sshCommand remote: remote, failOnError: false, command: "docker image ls | grep $DOCKER_IMAGE"
                     }
                }
