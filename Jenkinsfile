@@ -4,7 +4,7 @@ pipeline {
     //     //nodejs "node"
     //     //dockerTool "docker"
     // }
-    enviroment {
+    environment {
         DOCKER_IMAGE = "vinhnquoc/capstone-backend"
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     }
