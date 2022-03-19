@@ -12,9 +12,7 @@ pipeline {
         stage("email") {
             steps {
                 script {
-                    def mailRecipients =
-                        "unilinkproject@gmail.com" +
-                        ";vinhnquoc196@gmail.com";
+                    def mailRecipients = "unilinkproject@gmail.com;vinhnquoc196@gmail.com";
 
                     emailext attachLog: true,
                     body: '$DEFAULT_CONTENT',
