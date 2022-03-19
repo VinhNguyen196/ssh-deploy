@@ -137,11 +137,11 @@ pipeline {
                         to: "$mailRecipients"
                 }
         }
-        success {
-            // recipientProviders: [developers(), requestor()],
-        }
-        failure {
-            // recipientProviders: [developers(), requestor()],
-        }
+        // success {
+        //     // recipientProviders: [developers(), requestor()],
+        // }
+        // failure {
+        //     // recipientProviders: [developers(), requestor()],
+        // }
     }
 }
