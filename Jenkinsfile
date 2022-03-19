@@ -12,8 +12,8 @@ pipeline {
         stage("email") {
             steps {
                 script {
-                    def mailRecipients = ["unilinkproject@gmail.com",
-                        "vinhnquoc196@gmail.com"];
+                    def mailRecipients = ['unilinkproject@gmail.com',
+                        'vinhnquoc196@gmail.com'];
                     for (i = 0; i < mailRecipients.size(); i++) {
                         def recipier = mailRecipients[i];
                         emailext attachLog: true,
@@ -21,7 +21,7 @@ pipeline {
                         mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
                         replyTo: '$DEFAULT_REPLYTO'
-                        to: '$recipier'
+                        to: "$recipier"
                     }
                 }
                 
