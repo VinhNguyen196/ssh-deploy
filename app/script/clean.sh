@@ -1,4 +1,5 @@
 #!/bin/bash
+source ~/.bashrc
 
 export TEMP_STR=$(docker images | grep $DOCKER_IMAGE)
 
