@@ -44,7 +44,7 @@ pipeline {
                         remote.allowAnyHosts = true
                         //sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
                         //sshCommand remote: remote, command: "source ~/.bashrc"
-                        def temp_str = sshCommand remote: remote, command: "\$(docker images | grep $DOCKER_IMAGE)"
+                        def temp_str = sshCommand remote: remote, command: "\$(docker images | grep \"$DOCKER_IMAGE)\""
                         sshCommand remote: remote, command: "echo $temp_str"
                         //sshCommand remote: remote, command: "echo $DOCKER_IMAGE"
                         // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
