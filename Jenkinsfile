@@ -137,7 +137,6 @@ pipeline {
                         ";";
                     emailext attachLog: true,
                         body: '''${SCRIPT, template="groovy-html.template"}''',
-                        mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
                         to: "$mailRecipients"
                 }
