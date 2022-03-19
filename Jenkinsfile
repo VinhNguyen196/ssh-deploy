@@ -21,7 +21,7 @@ pipeline {
                         mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
                         replyTo: '$DEFAULT_REPLYTO'
-                        to: "$recipier"
+                        to: '$recipier'
                     }
                 }
                 
