@@ -9,54 +9,57 @@ pipeline {
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     }
     stages {
-        stage("build") {
-            steps {
-                sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                    sh "docker login -u $user -p $pass"
-                }
-                sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                script {
-                    if (GIT_BRANCH ==~ /.*master.*/) {
-                        sh "docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
-                        sh "docker push ${env.DOCKER_IMAGE}:latest"
-                        env.DOCKER_TAG = "latest"
-                    }
-                }
-                sh "docker image ls | grep ${env.DOCKER_TAG}"
-                sh "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-            }
+        stage("email") {
+            emailextrecipients([developers()])
         }
-        stage("deploy") {
-            environment {
-                DEPLOY_DIR = "./deploy"
-                COMPOSE_FILE = "./docker-compose.yaml"
-            }
-            steps {
-               script {
-                   withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                        def remote = [:]
-                        remote.name = 'deploy'
-                        remote.host = 'node-server.centralindia.cloudapp.azure.com'
-                        remote.user = "$user"
-                        remote.password = "$pass"
-                        remote.allowAnyHosts = true
-                        def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
-                        if (!temp_str.equals("")) {
-                            temp_str = temp_str.trim();
-                            def split = temp_str.split(' ');
-                            sshCommand remote: remote, command: " mkdir -p $DEPLOY_DIR"
-                            sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]} && export DOCKER_TAG=${split[1]} && cd $DEPLOY_DIR && docker compose down"
-                            sshCommand remote: remote, command: "docker image rm ${split[0]}:${split[1]}"
-                        }
-                        sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
-                        sshPut remote: remote, from: "$COMPOSE_FILE", into: "$DEPLOY_DIR"
-                        sshCommand remote: remote, command: "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
-                        sshCommand remote: remote, command: " export DOCKER_IMAGE=$DOCKER_IMAGE && export DOCKER_TAG=$DOCKER_TAG && cd $DEPLOY_DIR && docker compose up -d"
-                    }
-               }
-            }
-        }
+        // stage("build") {
+        //     steps {
+        //         sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
+        //         withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
+        //             sh "docker login -u $user -p $pass"
+        //         }
+        //         sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+        //         script {
+        //             if (GIT_BRANCH ==~ /.*master.*/) {
+        //                 sh "docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
+        //                 sh "docker push ${env.DOCKER_IMAGE}:latest"
+        //                 env.DOCKER_TAG = "latest"
+        //             }
+        //         }
+        //         sh "docker image ls | grep ${env.DOCKER_TAG}"
+        //         sh "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+        //     }
+        // }
+        // stage("deploy") {
+        //     environment {
+        //         DEPLOY_DIR = "./deploy"
+        //         COMPOSE_FILE = "./docker-compose.yaml"
+        //     }
+        //     steps {
+        //        script {
+        //            withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
+        //                 def remote = [:]
+        //                 remote.name = 'deploy'
+        //                 remote.host = 'node-server.centralindia.cloudapp.azure.com'
+        //                 remote.user = "$user"
+        //                 remote.password = "$pass"
+        //                 remote.allowAnyHosts = true
+        //                 def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
+        //                 if (!temp_str.equals("")) {
+        //                     temp_str = temp_str.trim();
+        //                     def split = temp_str.split(' ');
+        //                     sshCommand remote: remote, command: " mkdir -p $DEPLOY_DIR"
+        //                     sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]} && export DOCKER_TAG=${split[1]} && cd $DEPLOY_DIR && docker compose down"
+        //                     sshCommand remote: remote, command: "docker image rm ${split[0]}:${split[1]}"
+        //                 }
+        //                 sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
+        //                 sshPut remote: remote, from: "$COMPOSE_FILE", into: "$DEPLOY_DIR"
+        //                 sshCommand remote: remote, command: "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
+        //                 sshCommand remote: remote, command: " export DOCKER_IMAGE=$DOCKER_IMAGE && export DOCKER_TAG=$DOCKER_TAG && cd $DEPLOY_DIR && docker compose up -d"
+        //             }
+        //        }
+        //     }
+        // }
         // stage("Login with user role") {
         //     steps {
         //         sh 'touch /home/password.sh >> docker'
