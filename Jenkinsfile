@@ -52,7 +52,7 @@ pipeline {
                             sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]}"
                             sshCommand remote: remote, command: " export DOCKER_TAG=${split[1]}"
                             sshCommand remote: remote, command: " source ~/.bashrc"
-                            sshCommand remote: remote, command: " echo DOCKER_TAG"
+                            sshCommand remote: remote, command: " echo \$DOCKER_TAG"
                             sshCommand remote: remote, command: " source ~/.bashrc && cd ./deploy && docker compose down"
                         }
                         
