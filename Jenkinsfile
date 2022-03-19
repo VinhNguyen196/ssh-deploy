@@ -45,7 +45,7 @@ pipeline {
                         //sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
                         //sshCommand remote: remote, command: "source ~/.bashrc"
                         def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
-                        if (!temp_str.equal("")) {
+                        if (!temp_str.equals("")) {
                             temp_str = temp_str.trim();
                             def split = temp_str.split(' ');
                             sshCommand remote: remote, command: " mkdir -p ./deploy"
