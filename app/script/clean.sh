@@ -11,4 +11,4 @@ if [[ $TEMP_STR != "" ]]; then
 #    mkdir -p ./deploy && cd deploy
 #    docker compose down
 #    docker image rm $DOCKER_IMAGE:$DOCKER_TAG
-    echo "Vinh123" fi
+    echo "Vinh123" \ fi
