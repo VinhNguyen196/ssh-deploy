@@ -13,7 +13,7 @@ pipeline {
             steps {
                 emailext attachLog: true,
                 body: '$DEFAULT_CONTENT',
-                mimeType: 'HTML (text/html)',
+                mimeType: 'text/html',
                 subject: '$DEFAULT_SUBJECT',
                 to: '$DEFAULT_RECIPIENTS'
             }
