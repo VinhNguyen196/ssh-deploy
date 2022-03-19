@@ -14,7 +14,7 @@ pipeline {
                 script {
                     def mailRecipients = ["unilinkproject@gmail.com",
                         "vinhnquoc196@gmail.com"];
-                    for (int i = 0; i < mailRecipients.size; i++) {
+                    for (i = 0; i < mailRecipients.size(); i++) {
                         def recipier = mailRecipients[i];
                         emailext attachLog: true,
                         body: '$DEFAULT_CONTENT',
