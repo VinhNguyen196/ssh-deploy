@@ -5,6 +5,7 @@ export TEMP_STR=$(docker images | grep "$DOCKER_IMAGE")
 echo $TEMP_STR
 if [ "$TEMP_STR" != "" ]
 then
+ echo "Vinh123"
  TEMP_STR=$( echo ${TEMP_STR} | sed 's/^ *//g')
  TEMP_STR=${TEMP_STR/ /:}
  TEMP_STR=${TEMP_STR:0:`expr index "$TEMP_STR" " "`}
