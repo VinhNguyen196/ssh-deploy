@@ -29,9 +29,8 @@ pipeline {
         }
         stage("deploy") {
             environment {
-                SCRIPT_PATH = "./app/script/"
-                SCRIPT_CLEAN = "clean.sh"
-                SCRIPT_START = "start.sh"
+                DEPLOY_DIR = "./deploy"
+                COMPOSE_FILE = "./docker-compose.yaml"
             }
             steps {
                script {
@@ -42,34 +41,18 @@ pipeline {
                         remote.user = "$user"
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
-                        //sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
-                        //sshCommand remote: remote, command: "source ~/.bashrc"
                         def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
                         if (!temp_str.equals("")) {
                             temp_str = temp_str.trim();
                             def split = temp_str.split(' ');
-                            sshCommand remote: remote, command: " mkdir -p ./deploy"
-                            sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]} && export DOCKER_TAG=${split[1]} && cd ./deploy && docker compose down"
+                            sshCommand remote: remote, command: " mkdir -p $DEPLOY_DIR"
+                            sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]} && export DOCKER_TAG=${split[1]} && cd $DEPLOY_DIR && docker compose down"
                             sshCommand remote: remote, command: "docker image rm ${split[0]}:${split[1]}"
                         }
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
-                        sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
+                        sshPut remote: remote, from: "$COMPOSE_FILE", into: "$DEPLOY_DIR"
                         sshCommand remote: remote, command: "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
-                        sshCommand remote: remote, command: " export DOCKER_IMAGE=$DOCKER_IMAGE && export DOCKER_TAG=$DOCKER_TAG && cd ./deploy && docker compose up -d"
-                        
-                        //sshCommand remote: remote, command: "echo $DOCKER_IMAGE"
-                        // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
-                        // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
-                        // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
-                        // sshCommand remote: remote, command: "./deploy/$SCRIPT_CLEAN"
-                        //sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
-                        //sshRemove remote: remote, path: "./deploy/$SCRIPT_START"
-                        // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_START", into: "./deploy"
-                        // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_START & ./deploy/$SCRIPT_START"
-                        // sshCommand remote: remote, command: "./deploy/$SCRIPT_START"
-                        // sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_TAG=.*\\export DOCKER_TAG=\"$DOCKER_TAG\"\\g' ~/.bashrc"
-                        // sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_START"
-                        // sshCommand remote: remote, failOnError: false, command: "docker image ls | grep $DOCKER_IMAGE"
+                        sshCommand remote: remote, command: " export DOCKER_IMAGE=$DOCKER_IMAGE && export DOCKER_TAG=$DOCKER_TAG && cd $DEPLOY_DIR && docker compose up -d"
                     }
                }
             }
