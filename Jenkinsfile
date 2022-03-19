@@ -28,10 +28,10 @@ pipeline {
             }
         }
         stage("deploy") {
-            steps {
-                environment {
+            environment {
                     image_script="setup-image.sh"
                 }
+            steps {
                script {
                    withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
                         def remote = [:]
