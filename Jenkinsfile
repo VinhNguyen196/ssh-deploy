@@ -12,14 +12,17 @@ pipeline {
         stage("email") {
             steps {
                 script {
-                    def mailRecipients = "unilinkproject@gmail.com;vinhnquoc196@gmail.com";
-
-                    emailext attachLog: true,
-                    body: '$DEFAULT_CONTENT',
-                    mimeType: 'text/html',
-                    subject: '$DEFAULT_SUBJECT',
-                    replyTo: '$DEFAULT_REPLYTO'
-                    to: "$mailRecipients"
+                    def mailRecipients = ["unilinkproject@gmail.com",
+                        "vinhnquoc196@gmail.com"];
+                    for (int i = 0; i < mailRecipients.size; i++) {
+                        def recipier = mailRecipients[i];
+                        emailext attachLog: true,
+                        body: '$DEFAULT_CONTENT',
+                        mimeType: 'text/html',
+                        subject: '$DEFAULT_SUBJECT',
+                        replyTo: '$DEFAULT_REPLYTO'
+                        to: "$recipier"
+                    }
                 }
                 
             }
