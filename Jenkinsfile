@@ -29,8 +29,9 @@ pipeline {
         }
         stage("deploy") {
             environment {
-                    image_script = "setup-image.sh"
-                }
+                SCRIPT_DIR = "./app/deploy-sh/"
+                SCRIPT_FILE = "setup-image.sh"
+            }
             steps {
                script {
                    withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
@@ -41,9 +42,9 @@ pipeline {
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
                         sshCommand remote: remote, command: "export DOCKER_IMAGE=${env.DOCKER_IMAGE}"
-                        sshPut remote: remote, from: "./deploy-sh/$env.image_script", into: '.'
-                        sshCommand remote: remote, command: "sudo chmod 755 ./$env.image_script"
-                        sshCommand remote: remote, command: "./$env.image_script"
+                        sshPut remote: remote, from: "$env.SCRIPT_DIR$env.SCRIPT_FILE", into: '.'
+                        sshCommand remote: remote, command: "sudo chmod 755 ./$env.SCRIPT_FILE"
+                        sshCommand remote: remote, command: "./$env.SCRIPT_FILE"
                         sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
                         sshPut remote: remote, from: './docker-compose.yaml', into: '.'
                         sshCommand remote: remote, command: "docker compose down"
