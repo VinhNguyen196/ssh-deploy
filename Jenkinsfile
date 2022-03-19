@@ -10,7 +10,9 @@ pipeline {
     }
     stages {
         stage("email") {
-            emailextrecipients([developers()])
+            steps {
+                emailextrecipients([developers()])
+            }
         }
         // stage("build") {
         //     steps {
