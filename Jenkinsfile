@@ -45,9 +45,15 @@ pipeline {
                         //sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
                         //sshCommand remote: remote, command: "source ~/.bashrc"
                         def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
-                        temp_str = temp_str.trim();
-                        def split = temp_str.split(' ');
-                        sh "echo $split"
+                        if (!temp_str.equal("")) {
+                            temp_str = temp_str.trim();
+                            def split = temp_str.split(' ');
+                            sshCommand remote: remote, command: " mkdir -p ./deploy"
+                            sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]}"
+                            sshCommand remote: remote, command: " export DOCKER_TAG=${split[1]}"
+                            sshCommand remote: remote, command: " cd ./deploy && docker compose down"
+                        }
+                        
                         //sshCommand remote: remote, command: "echo $DOCKER_IMAGE"
                         // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
                         // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
