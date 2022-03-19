@@ -14,8 +14,7 @@ pipeline {
                 script {
                     def mailRecipients = "unilinkproject@gmail.com"+
                         ";vinhnquoc196@gmail.com";
-                    emailext
-                        attachLog: true,
+                    emailext attachLog: true,
                         body: '$DEFAULT_CONTENT',
                         mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
