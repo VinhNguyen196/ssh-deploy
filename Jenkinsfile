@@ -42,7 +42,7 @@ pipeline {
                         remote.user = "$user"
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
-                        sshCommand remote: remote, command: "sudo sed -i `s/export DOCKER_IMAGE=.*/export DOCKER_IMAGE=$DOCKER_IMAGE/g` ~/.bashrc"
+                        sshCommand remote: remote, command: "sudo sed -i 's/export DOCKER_IMAGE=.*/export DOCKER_IMAGE=$DOCKER_IMAGE/g' ~/.bashrc"
                         sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
                         sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
