@@ -43,6 +43,7 @@ pipeline {
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
                         sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
+                        sshCommand remote: remote, command: "source ~/.bashrc"
                         // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
                         // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
                         // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
