@@ -1,7 +1,7 @@
 #!/bin/bash
 source ~/.bashrc
-echo "$DOCKER_IMAGE"
-export TEMP_STR=$(docker images | grep "$DOCKER_IMAGE")
+echo $DOCKER_IMAGE
+export TEMP_STR=$(docker images | grep $DOCKER_IMAGE)
 echo "$TEMP_STR"
 if [ "$TEMP_STR" == "" ]
 then
