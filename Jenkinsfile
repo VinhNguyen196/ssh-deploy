@@ -9,24 +9,24 @@ pipeline {
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     }
     stages {
-        stage("build") {
-            steps {
-                sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                    sh "docker login -u $user -p $pass"
-                }
-                sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                script {
-                    if (GIT_BRANCH ==~ /.*master.*/) {
-                        sh "docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
-                        sh "docker push ${env.DOCKER_IMAGE}:latest"
-                        env.DOCKER_TAG = "latest"
-                    }
-                }
-                sh "docker image ls | grep ${env.DOCKER_TAG}"
-                sh "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-            }
-        }
+        // stage("build") {
+        //     steps {
+        //         sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
+        //         withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
+        //             sh "docker login -u $user -p $pass"
+        //         }
+        //         sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+        //         script {
+        //             if (GIT_BRANCH ==~ /.*master.*/) {
+        //                 sh "docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
+        //                 sh "docker push ${env.DOCKER_IMAGE}:latest"
+        //                 env.DOCKER_TAG = "latest"
+        //             }
+        //         }
+        //         sh "docker image ls | grep ${env.DOCKER_TAG}"
+        //         sh "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+        //     }
+        // }
         stage("deploy") {
             environment {
                 SCRIPT_PATH = "./app/script/"
@@ -48,15 +48,15 @@ pipeline {
                         // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
                         // sshCommand remote: remote, command: "./deploy/$SCRIPT_CLEAN"
                         sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
-                        sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
-                        sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
+                        //sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
+                        //sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
                         //sshRemove remote: remote, path: "./deploy/$SCRIPT_START"
                         // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_START", into: "./deploy"
                         // sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_START & ./deploy/$SCRIPT_START"
                         // sshCommand remote: remote, command: "./deploy/$SCRIPT_START"
-                        sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_TAG=.*\\export DOCKER_TAG=\"$DOCKER_TAG\"\\g' ~/.bashrc"
-                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_START"
-                        sshCommand remote: remote, failOnError: false, command: "docker image ls | grep $DOCKER_IMAGE"
+                        // sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_TAG=.*\\export DOCKER_TAG=\"$DOCKER_TAG\"\\g' ~/.bashrc"
+                        // sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_START"
+                        // sshCommand remote: remote, failOnError: false, command: "docker image ls | grep $DOCKER_IMAGE"
                     }
                }
             }
