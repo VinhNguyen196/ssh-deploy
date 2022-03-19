@@ -37,12 +37,14 @@ pipeline {
                         remote.user = "$user"
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
+                        sshCommand remote: remote, command: "export DOCKER_IMAGE=${env.DOCKER_IMAGE}"
+                        sshCommand remote: remote, command: "export DOCKER_TAG=${env.DOCKER_TAG}"
                         sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
                         sshPut remote: remote, from: './docker-compose.yaml', into: '.'
                         sshCommand remote: remote, command: "docker compose down"
-                        sshCommand remote: remote, failOnError: false, command: "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                        sshCommand remote: remote, command: "docker pull ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                        sshCommand remote: remote, command: "docker image ls | grep ${env.DOCKER_IMAGE}"
+                        sshCommand remote: remote, failOnError: false, command: "docker image rm $DOCKER_IMAGE:$DOCKER_TAG"
+                        sshCommand remote: remote, command: "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
+                        sshCommand remote: remote, command: "docker image ls | grep $DOCKER_IMAGE"
                         sshCommand remote: remote, command: "docker compose up -d"
                     }
                }

@@ -1,7 +1,7 @@
 version: "3"
 services:
   my-app:
-    image: ${DOCKER_IMAGE}:latest
+    image: ${DOCKER_IMAGE}:${DOCKER_TAG}
     ports:
       - 80:3000
   mongodb:
