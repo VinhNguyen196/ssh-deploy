@@ -1,34 +1,53 @@
 pipeline {
-    agent any
+    agent none
     // tools {
     //     //nodejs "node"
     //     //dockerTool "docker"
     // }
+    enviroment {
+        DOCKER_IMAGE = "vinhnquoc/capstone-backend"
+        DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
+    }
     stages {
-        stage("test") {
+        stage("build") {
             steps {
-                sh "echo ${GIT_BRANCH}"
-                sh "echo ${GIT_BRANCH.tokenize('/').pop()}"
-                sh "echo ${GIT_COMMIT}"
+                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                    sh "docker login -u $user -p $pass"
+                }
+                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                script {
+                    if (GIT_BRANCH ==~ /.*master.*/) {
+                        sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
+                        sh "docker push ${DOCKER_IMAGE}:latest"
+                        DOCKER_TAG = "latest"
+                    }
+                }
+                sh "docker image ls | grep ${DOCKER_TAG}"
+                sh "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
             }
         }
-        // stage("SSH Agent") {
-        //     steps {
-        //        script {
-        //            withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
-        //                 def remote = [:]
-        //                 remote.name = 'deploy'
-        //                 remote.host = 'node-server.centralindia.cloudapp.azure.com'
-        //                 remote.user = "$user"
-        //                 remote.password = "$pass"
-        //                 remote.allowAnyHosts = true
-        //                 sshCommand remote: remote, command: "cd deploy && docker compose down"
-        //                 sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
-        //                 sshCommand remote: remote, command: "cd deploy && docker compose up -d"
-        //             }
-        //        }
-        //     }
-        // }
+        stage("deploy") {
+            steps {
+               script {
+                   withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
+                        def remote = [:]
+                        remote.name = 'deploy'
+                        remote.host = 'node-server.centralindia.cloudapp.azure.com'
+                        remote.user = "$user"
+                        remote.password = "$pass"
+                        remote.allowAnyHosts = true
+                        sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
+                        sshPut remote: remote, from: './docker-compose.yaml', into: '.'
+                        sshCommand remote: remote, command: "docker compose down"
+                        sshCommand remote: remote, command: "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sshCommand remote: remote, command: "docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                        sshCommand remote: remote, command: "docker image ls | grep ${DOCKER_IMAGE}"
+                        sshCommand remote: remote, command: "docker compose up -d"
+                    }
+               }
+            }
+        }
         // stage("Login with user role") {
         //     steps {
         //         sh 'touch /home/password.sh >> docker'
@@ -54,6 +73,7 @@ pipeline {
         //         }
         //     }
         // }
+
         // stage("Npm install") {
         //     // steps {
         //     //     nodejs('Node-17.6.0') {
@@ -84,11 +104,11 @@ pipeline {
         // //     }
         // // }
         // // stage("Login dockerhub") {
-        // //     steps {
-        // //        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
-        // //             sh "docker login -u $user -p $pass"
-        // //         }
-        // //     }
+        //     steps {
+        //        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
+        //             sh "docker login -u $user -p $pass"
+        //         }
+        //     }
         // // }
         // // stage("Push Image") {
         // //     steps {
