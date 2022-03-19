@@ -46,7 +46,7 @@ pipeline {
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
                         sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
                         sshScript remote: remote, failOnError: false, script: "$SCRIPT_PATH$SCRIPT_START"
-                        sshCommand remote: remote, command: "docker image ls | grep $DOCKER_IMAGE"
+                        sshCommand remote: remote, failOnerror: false, command: "docker image ls | grep $DOCKER_IMAGE"
                     }
                }
             }
