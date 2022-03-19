@@ -50,7 +50,10 @@ pipeline {
                             def split = temp_str.split(' ');
                             sshCommand remote: remote, command: " mkdir -p ./deploy"
                             sshCommand remote: remote, command: " export DOCKER_IMAGE=${split[0]} && export DOCKER_TAG=${split[1]} && cd ./deploy && docker compose down"
+                            sshCommand remote: remote, command: "docker image rm ${split[0]}:${split[1]}"
                         }
+                        sshCommand remote: remote, command: "docker pull $DOCKER_IMAGE:$DOCKER_TAG"
+                        sshCommand remote: remote, command: " export DOCKER_IMAGE=$DOCKER_IMAGE && export DOCKER_TAG=$DOCKER_TAG && cd ./deploy && docker compose up -d"
                         
                         //sshCommand remote: remote, command: "echo $DOCKER_IMAGE"
                         // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
