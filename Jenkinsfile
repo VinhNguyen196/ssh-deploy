@@ -136,7 +136,7 @@ pipeline {
                     def mailRecipients = "unilinkproject@gmail.com"+
                         ";";
                     emailext attachLog: true,
-                        body: '''${SCRIPT, template="groovy_html.template"}''',
+                        body: '''${SCRIPT, template="groovy-html.template"}''',
                         mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
                         to: "$mailRecipients"
