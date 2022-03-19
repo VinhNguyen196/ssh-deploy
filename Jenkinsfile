@@ -42,9 +42,7 @@ pipeline {
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
                         sshCommand remote: remote, command: "export DOCKER_IMAGE=${env.DOCKER_IMAGE}"
-                        sshPut remote: remote, from: "$env.SCRIPT_DIR$env.SCRIPT_FILE", into: '.'
-                        sshCommand remote: remote, command: "sudo chmod 755 ./$env.SCRIPT_FILE"
-                        sshScript remote: remote, script: "./$env.SCRIPT_FILE"
+                        sshScript remote: remote, script: "$env.SCRIPT_DIR$env.SCRIPT_FILE"
                         sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
                         sshPut remote: remote, from: './docker-compose.yaml', into: '.'
                         sshCommand remote: remote, command: "docker compose down"
