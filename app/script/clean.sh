@@ -1,5 +1,5 @@
 #!/bin/bash
-export DOCKER_IMAGE=${DOCKER_IMAGE}
+export DOCKER_IMAGE=${env.DOCKER_IMAGE}
 
 export TEMP_STR=$(docker images | grep $DOCKER_IMAGE)
 
