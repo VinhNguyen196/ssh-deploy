@@ -11,7 +11,13 @@ pipeline {
     stages {
         stage("email") {
             steps {
-                emailextrecipients([developers(), buildUser(), upstreamDevelopers()])
+                emailext attachLog: true,
+                body: '$DEFAULT_CONTENT',
+                mimeType: 'HTML (text/html)',
+                postsendScript: '$DEFAULT_POSTSEND_SCRIPT',
+                presendScript: '$DEFAULT_PRESEND_SCRIPT',
+                subject: '$DEFAULT_SUBJECT',
+                to: '$DEFAULT_RECIPIENTS'
             }
         }
         // stage("build") {
