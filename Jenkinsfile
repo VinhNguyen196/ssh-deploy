@@ -29,7 +29,7 @@ pipeline {
         }
         stage("deploy") {
             environment {
-                    image_script="setup-image.sh"
+                    image_script = "setup-image.sh"
                 }
             steps {
                script {
