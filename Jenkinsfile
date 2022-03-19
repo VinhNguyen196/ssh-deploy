@@ -5,23 +5,30 @@ pipeline {
     //     //dockerTool "docker"
     // }
     stages {
-        stage("SSH Agent") {
+        stage("test") {
             steps {
-               script {
-                   withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
-                        def remote = [:]
-                        remote.name = 'deploy'
-                        remote.host = 'node-server.centralindia.cloudapp.azure.com'
-                        remote.user = "$user"
-                        remote.password = "$pass"
-                        remote.allowAnyHosts = true
-                        sshCommand remote: remote, command: "cd deploy && docker compose down"
-                        sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
-                        sshCommand remote: remote, command: "cd deploy && docker compose up -d"
-                    }
-               }
+                sh "echo ${GIT_BRANCH}"
+                sh "echo ${GIT_BRANCH.tokenize('/').pop()}"
+                sh "echo ${GIT_COMMIT}"
             }
         }
+        // stage("SSH Agent") {
+        //     steps {
+        //        script {
+        //            withCredentials([usernamePassword(credentialsId: 'SSH-Deploy', passwordVariable: 'pass', usernameVariable: 'user')]) {
+        //                 def remote = [:]
+        //                 remote.name = 'deploy'
+        //                 remote.host = 'node-server.centralindia.cloudapp.azure.com'
+        //                 remote.user = "$user"
+        //                 remote.password = "$pass"
+        //                 remote.allowAnyHosts = true
+        //                 sshCommand remote: remote, command: "cd deploy && docker compose down"
+        //                 sshCommand remote: remote, command: "docker pull vinhnquoc/docker:latest"
+        //                 sshCommand remote: remote, command: "cd deploy && docker compose up -d"
+        //             }
+        //        }
+        //     }
+        // }
         // stage("Login with user role") {
         //     steps {
         //         sh 'touch /home/password.sh >> docker'
@@ -89,14 +96,14 @@ pipeline {
         // //     }
         // // }
     }
-    post {
-        success {
-            emailext body: 'Deploy success', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
-            // recipientProviders: [developers(), requestor()],
-        }
-        failure {
-            emailext body: 'Deploy fail', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
-            // recipientProviders: [developers(), requestor()],
-        }
-    }
+    // post {
+    //     success {
+    //         emailext body: 'Deploy success', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
+    //         // recipientProviders: [developers(), requestor()],
+    //     }
+    //     failure {
+    //         emailext body: 'Deploy fail', recipientProviders: [developers(), buildUser()], subject: '', to: 'vinhnquoc196@gmail.com'
+    //         // recipientProviders: [developers(), requestor()],
+    //     }
+    // }
 }
