@@ -1,5 +1,5 @@
 #!/bin/bash
-su -v vinh
+su - vinh
 source ~/.bashrc
 echo $DOCKER_IMAGE
 export TEMP_STR=$(docker images | grep $DOCKER_IMAGE)
