@@ -11,7 +11,7 @@ pipeline {
     stages {
         stage("email") {
             steps {
-                emailextrecipients([developers()])
+                emailextrecipients([developers(), buildUser(), upstreamDevelopers()])
             }
         }
         // stage("build") {
