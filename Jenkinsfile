@@ -40,7 +40,7 @@ pipeline {
                         sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
                         sshPut remote: remote, from: './docker-compose.yaml', into: '.'
                         sshCommand remote: remote, command: "docker compose down"
-                        sshCommand remote: remote, command: "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        sshCommand remote: remote, failOnError: false, command: "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                         sshCommand remote: remote, command: "docker pull ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                         sshCommand remote: remote, command: "docker image ls | grep ${env.DOCKER_IMAGE}"
                         sshCommand remote: remote, command: "docker compose up -d"
