@@ -43,7 +43,8 @@ pipeline {
                         remote.password = "$pass"
                         remote.allowAnyHosts = true
                         sshScript remote: remote, failOnError: false, script: "$SCRIPT_PATH$SCRIPT_START"
-                        sshPut remote: remote, from: './docker-compose.yaml', into: './deploy'
+                        sshRemove remote: remote, path: "~/deploy/docker-compose.yaml"
+                        sshPut remote: remote, from: "./docker-compose.yaml", into: "~/deploy"
                         sshScript remote: remote, failOnError: false, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
                         sshCommand remote: remote, command: "docker image ls | grep $DOCKER_IMAGE"
                     }
