@@ -45,7 +45,9 @@ pipeline {
                         //sshCommand remote: remote, command: "sudo sed -i 's\\export DOCKER_IMAGE=.*\\export DOCKER_IMAGE=\"$DOCKER_IMAGE\"\\g' ~/.bashrc"
                         //sshCommand remote: remote, command: "source ~/.bashrc"
                         def temp_str = sshCommand remote: remote, failOnError: false, command: "echo \$(docker images | grep $DOCKER_IMAGE)"
-                        sshCommand remote: remote, command: "echo $temp_str"
+                        temp_str = temp_str.trim();
+                        def split = temp_str.split(' ');
+                        sh "echo $split"
                         //sshCommand remote: remote, command: "echo $DOCKER_IMAGE"
                         // sshRemove remote: remote, path: "./deploy/$SCRIPT_CLEAN"
                         // sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
