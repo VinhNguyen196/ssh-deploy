@@ -47,7 +47,7 @@ pipeline {
                         sshPut remote: remote, from: "$SCRIPT_PATH$SCRIPT_CLEAN", into: "./deploy"
                         sshCommand remote: remote, command: "sudo chmod +x ./deploy/$SCRIPT_CLEAN"
                         sshCommand remote: remote, command: "./deploy/$SCRIPT_CLEAN"
-                        sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
+                        //sshScript remote: remote, script: "$SCRIPT_PATH$SCRIPT_CLEAN"
                         sshRemove remote: remote, path: "./deploy/docker-compose.yaml"
                         sshPut remote: remote, from: "./docker-compose.yaml", into: "./deploy"
                         //sshRemove remote: remote, path: "./deploy/$SCRIPT_START"
