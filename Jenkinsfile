@@ -11,11 +11,19 @@ pipeline {
     stages {
         stage("email") {
             steps {
-                emailext attachLog: true,
-                body: '$DEFAULT_CONTENT',
-                mimeType: 'text/html',
-                subject: '$DEFAULT_SUBJECT',
-                to: '$DEFAULT_RECIPIENTS'
+                script {
+                    def mailRecipients =
+                        "unilinkproject@gmail.com" +
+                        ";vinhnquoc196@gmail.com";
+
+                    emailext attachLog: true,
+                    body: '$DEFAULT_CONTENT',
+                    mimeType: 'text/html',
+                    subject: '$DEFAULT_SUBJECT',
+                    replyTo: '$DEFAULT_REPLYTO'
+                    to: "$mailRecipients"
+                }
+                
             }
         }
         // stage("build") {
