@@ -11,20 +11,20 @@ pipeline {
     stages {
         stage("build") {
             steps {
-                sh "docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} ."
+                sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
                     sh "docker login -u $user -p $pass"
                 }
-                sh "docker push ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                sh "docker push ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
                 script {
                     if (GIT_BRANCH ==~ /.*master.*/) {
-                        sh "docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest"
-                        sh "docker push ${DOCKER_IMAGE}:latest"
-                        DOCKER_TAG = "latest"
+                        sh "docker tag ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ${env.DOCKER_IMAGE}:latest"
+                        sh "docker push ${env.DOCKER_IMAGE}:latest"
+                        env.DOCKER_TAG = "latest"
                     }
                 }
-                sh "docker image ls | grep ${DOCKER_TAG}"
-                sh "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
+                sh "docker image ls | grep ${env.DOCKER_TAG}"
+                sh "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
             }
         }
         stage("deploy") {
@@ -40,9 +40,9 @@ pipeline {
                         sshCommand remote: remote, command: "mkdir -p ./deploy && cd deploy"
                         sshPut remote: remote, from: './docker-compose.yaml', into: '.'
                         sshCommand remote: remote, command: "docker compose down"
-                        sshCommand remote: remote, command: "docker image rm ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        sshCommand remote: remote, command: "docker pull ${DOCKER_IMAGE}:${DOCKER_TAG}"
-                        sshCommand remote: remote, command: "docker image ls | grep ${DOCKER_IMAGE}"
+                        sshCommand remote: remote, command: "docker image rm ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        sshCommand remote: remote, command: "docker pull ${env.DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        sshCommand remote: remote, command: "docker image ls | grep ${env.DOCKER_IMAGE}"
                         sshCommand remote: remote, command: "docker compose up -d"
                     }
                }
