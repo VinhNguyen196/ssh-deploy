@@ -58,7 +58,7 @@ app.post('/update-profile', function (req, res) {
 app.get('/get-profile', function (req, res) {
   let response = {};
   // Connect to the db
-  MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
+  let tmp = MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
     if (err) throw err;
 
     let db = client.db(databaseName);
@@ -74,6 +74,7 @@ app.get('/get-profile', function (req, res) {
       res.send(response ? response : {});
     });
   });
+  console.log(tmp);
 });
 
 app.listen(3000, function () {
