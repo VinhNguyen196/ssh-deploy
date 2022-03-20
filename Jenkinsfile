@@ -31,6 +31,7 @@ pipeline {
         stage("test") {
             steps {
                 echo "Passed testing"
+                echo "H2"
             }
         }
     }
