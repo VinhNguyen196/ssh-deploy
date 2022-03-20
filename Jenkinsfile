@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+        nodejs "node"
+        dockerTool "docker"
+    }
     environment {
         DOCKER_IMAGE = "vinhnquoc/capstone-backend"
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
