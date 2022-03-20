@@ -5,11 +5,6 @@ pipeline {
         DOCKER_TAG = "${GIT_BRANCH.tokenize('/').pop()}-${GIT_COMMIT.substring(0,7)}"
     }
     stages {
-        stage("test") {
-            steps {
-                echo "Vinh"
-            }
-        }
         stage("SonarQube check") {
             steps {
                 script {
