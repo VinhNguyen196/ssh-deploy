@@ -111,7 +111,7 @@ pipeline {
                             body: '''${SCRIPT, template="groovy-html.template"}''',
                             mimeType: 'text/html',
                             subject: '$DEFAULT_SUBJECT',
-                            recipientProviders: [developers()]
+                            recipientProviders: [developers(), requestor()]
                     }
                 }
         }
