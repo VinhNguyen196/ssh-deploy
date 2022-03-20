@@ -45,7 +45,7 @@ app.post('/update-profile', function (req, res) {
     let myquery = { userid: 1 };
     let newvalues = { $set: userObj };
 
-    db.collection("users").updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
+    db.collection("users").updateOne(myquery, newvalues, {upsert: true}, function(errr, res) {
       if (errr) throw errr;
       client.close();
     });
@@ -58,15 +58,15 @@ app.post('/update-profile', function (req, res) {
 app.get('/get-profile', function (req, res) {
   let response = {};
   // Connect to the db
-  MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (errr, client) {
-    if (errr) throw errr;
+  MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
+    if (err) throw err;
 
     let db = client.db(databaseName);
-
+    
     let myquery = { userid: 1 };
 
-    db.collection("users").findOne(myquery, function (err, result) {
-      if (err) throw err;
+    db.collection("users").findOne(myquery, function (errr, result) {
+      if (errr) throw errr;
       response = result;
       client.close();
 
