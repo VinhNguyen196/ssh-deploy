@@ -45,10 +45,15 @@ app.post('/update-profile', function (req, res) {
     let myquery = { userid: 1 };
     let newvalues = { $set: userObj };
 
-    db.collection("users")?.updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
-      if (errr) throw errr;
-      client.close();
-    });
+    if (db != null) {
+      let tmp =  db.collection("users");
+      if (tmp != null) {
+        tmp.updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
+          if (errr) throw errr;
+          client.close();
+        });
+      }
+    }
 
   });
   // Send response
@@ -64,15 +69,20 @@ app.get('/get-profile', function (req, res) {
     let db = client.db(databaseName);
 
     let myquery = { userid: 1 };
-
-    db.collection("users")?.findOne(myquery, function (err, result) {
-      if (err) throw err;
-      response = result;
-      client.close();
-
-      // Send response
-      res.send(response ? response : {});
-    });
+    if (db != null) {
+      let tmp =  db.collection("users");
+      if (tmp != null) {
+        tmp.findOne(myquery, function (err, result) {
+          if (err) throw err;
+          response = result;
+          client.close();
+    
+          // Send response
+          res.send(response ? response : {});
+        });
+      }
+    }
+    
   });
 });
 
