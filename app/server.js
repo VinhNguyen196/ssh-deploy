@@ -45,15 +45,10 @@ app.post('/update-profile', function (req, res) {
     let myquery = { userid: 1 };
     let newvalues = { $set: userObj };
 
-    if (db != null) {
-      let tmp =  db.collection("users");
-      if (tmp != null) {
-        tmp.updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
-          if (errr) throw errr;
-          client.close();
-        });
-      }
-    }
+    db.collection("users").updateOne(myquery, newvalues, {upsert: true}, function(err, res) {
+      if (err) throw err;
+      client.close();
+    });
 
   });
   // Send response
@@ -63,26 +58,21 @@ app.post('/update-profile', function (req, res) {
 app.get('/get-profile', function (req, res) {
   let response = {};
   // Connect to the db
-  MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (errr, client) {
-    if (errr) throw errr;
+  MongoClient.connect(mongoUrlDocker, mongoClientOptions, function (err, client) {
+    if (err) throw err;
 
     let db = client.db(databaseName);
 
     let myquery = { userid: 1 };
-    if (db != null) {
-      let tmp =  db.collection("users");
-      if (tmp != null) {
-        tmp.findOne(myquery, function (err, result) {
-          if (err) throw err;
-          response = result;
-          client.close();
-    
-          // Send response
-          res.send(response ? response : {});
-        });
-      }
-    }
-    
+
+    db.collection("users").findOne(myquery, function (err, result) {
+      if (err) throw err;
+      response = result;
+      client.close();
+
+      // Send response
+      res.send(response ? response : {});
+    });
   });
 });
 
