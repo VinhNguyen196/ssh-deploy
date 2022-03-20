@@ -27,9 +27,11 @@ pipeline {
             }
         }
         stage("testing") {
-            // defined testing phase here
-            echo "Passed testing"
-            //
+            steps {
+                // defined testing phase here
+                echo "Passed testing"
+                //
+            }
         }
         stage("build") {
             steps {
