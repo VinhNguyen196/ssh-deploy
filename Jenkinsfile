@@ -38,6 +38,9 @@ pipeline {
             }
         }
         stage("build") {
+            when {
+                branch 'main'
+            }
             steps {
                 sh "docker build -t ${env.DOCKER_IMAGE}:${env.DOCKER_TAG} ."
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'pass', usernameVariable: 'user')]) {
@@ -56,6 +59,9 @@ pipeline {
             }
         }
         stage("deploy") {
+            when {
+                branch 'main'
+            }
             environment {
                 DEPLOY_DIR = "./deploy"
                 COMPOSE_FILE = "./docker-compose.yaml"
@@ -89,15 +95,24 @@ pipeline {
     post {
         always {
             script {
-                    def mailRecipients = "unilinkproject@gmail.com"+
+                    if (env.BRANCH_NAME == 'main') {
+                        def mailRecipients = "unilinkproject@gmail.com"+
                         ";";
-                    emailext attachLog: true,
-                        //body: '$DEFAULT_CONTENT',
-                        body: '''${SCRIPT, template="groovy-html.template"}''',
-                        mimeType: 'text/html',
-                        subject: '$DEFAULT_SUBJECT',
-                        recipientProviders: [developers(), requestor()],
-                        to: "$mailRecipients"
+                        emailext attachLog: true,
+                            //body: '$DEFAULT_CONTENT',
+                            body: '''${SCRIPT, template="groovy-html.template"}''',
+                            mimeType: 'text/html',
+                            subject: '$DEFAULT_SUBJECT',
+                            recipientProviders: [developers(), requestor()],
+                            to: "$mailRecipients"
+                    } else {
+                        emailext attachLog: true,
+                            //body: '$DEFAULT_CONTENT',
+                            body: '''${SCRIPT, template="groovy-html.template"}''',
+                            mimeType: 'text/html',
+                            subject: '$DEFAULT_SUBJECT',
+                            recipientProviders: [requestor()]
+                    }
                 }
         }
     }
