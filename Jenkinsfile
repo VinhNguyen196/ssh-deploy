@@ -140,14 +140,9 @@ pipeline {
                         body: '''${SCRIPT, template="groovy-html.template"}''',
                         mimeType: 'text/html',
                         subject: '$DEFAULT_SUBJECT',
+                        recipientProviders: [developers(), requestor()],
                         to: "$mailRecipients"
                 }
         }
-        // success {
-        //     // recipientProviders: [developers(), requestor()],
-        // }
-        // failure {
-        //     // recipientProviders: [developers(), requestor()],
-        // }
     }
 }
