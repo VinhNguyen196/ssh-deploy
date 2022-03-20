@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    options {
+        buildDiscarder logRotator(numToKeepStr:'5', daystoKeepStr: '', artifactNumToKeepStr: '5', artifactDaysToKeepStr: '')
+        disableConcurrentBuilds()
+    }
     tools {
         nodejs "node"
         dockerTool "docker"
