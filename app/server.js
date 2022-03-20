@@ -45,8 +45,7 @@ app.post('/update-profile', function (req, res) {
     let myquery = { userid: 1 };
     let newvalues = { $set: userObj };
 
-    let tmp = db.collection("users");
-    tmp.updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
+    db.collection("users")?.updateOne(myquery, newvalues, {upsert: true}, function(errr, ress) {
       if (errr) throw errr;
       client.close();
     });
@@ -66,8 +65,7 @@ app.get('/get-profile', function (req, res) {
 
     let myquery = { userid: 1 };
 
-    let tmp = db.collection("users");
-    tmp.findOne(myquery, function (err, result) {
+    db.collection("users")?.findOne(myquery, function (err, result) {
       if (err) throw err;
       response = result;
       client.close();
